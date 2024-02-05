@@ -1,0 +1,16 @@
+defaults:
+  - .@local: local
+  - .@dataset: dataset
+  - override hydra/hydra_logging: disabled
+  - override hydra/job_logging: disabled
+  
+pos_weight: 2048
+lr: 7e-4
+l2_dec: 0
+epochs: 20
+model: "sat_sinr_mf_zc"
+sinr_layers: 8
+sinr_hidden: 512
+dropout: 0.3
+embedder: "ae_default"
+tag: ""
