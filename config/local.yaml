@@ -1,0 +1,8 @@
+sent_data_path: "/data/jdolli/glc23_data/SatelliteImages/"
+bioclim_lr_path: "/data/jdolli/glc23_data/sinr_data/data/env/bioclim_elevation_scaled_europe.npy"
+bioclim_path: "/data/jdolli/bioclim+elev/bioclim_elevation_scaled_europe.npy"
+dataset_file_path: "/data/jdolli/glc23_data/Pot_10_to_1000.csv"
+cp_dir_path: "/scratch/jdolli/sent-sinr/checkpoints"
+logs_dir_path: "/scratch/jdolli/sent-sinr/wandb_logs"
+val_data_path: "/data/jdolli/glc23_data/Presence_Absence_surveys/loc_to_spec.csv"
+gpu: True
