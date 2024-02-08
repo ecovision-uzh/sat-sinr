@@ -6,7 +6,7 @@ import os
 import pandas as pd
 import numpy as np
 import pytorch_lightning as pl
-from utils import RandomEuropeDS
+#from utils import RandomEuropeDS
 from sklearn.metrics import roc_auc_score
 
 class ResidLayer(torch.nn.Module):
@@ -92,11 +92,8 @@ class SINR(pl.LightningModule):
         loc_features, labels = batch
         random_loc_features = dataset.sample_encoded_locs(len(batch)).to(labels.device)
         
-        print(random_loc_features.shape)
         loc_pred = torch.sigmoid(self(loc_features))
-        print(loc_pred.shape)
         rand_pred = torch.sigmoid(self(random_loc_features))
-        print(rand_pred.shape)
 
         inds = torch.arange(len(labels))
 
@@ -423,7 +420,7 @@ class SASI_EF(torch.nn.Module):
         return self.net(torch.cat((enc, sent_input), dim=-1))
     
 def get_model(params, model):
-    """Function to get model based on parameter"""
+        """Function to get model based on parameter"""
         if model == "sat_sinr_lf":
             net = SASI_LF(params)
         elif model == "sat_only":
