@@ -15,7 +15,7 @@ class SINR_DS(torch.utils.data.Dataset):
         self.bioclim_path = bioclim_path
         
         # val_data is not used by the dataset itself, but the model needs this object
-        with open(params.dataset.val_data_path, "r") as f:
+        with open(params.local.val_data_path, "r") as f:
             self.val_data = json.load(f)
             
         self.predictors = predictors
