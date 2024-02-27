@@ -150,13 +150,13 @@ class DefaultParams():
         self.dataset.batchsize = 2048
         self.dataset.use_ds_samples = True
         self.dataset.num_workers = 16
-        self.local.sent_data_path = "/shares/wegner.ics.uzh/glc23_data/glc23_data/SatelliteImages/"
-        self.local.bioclim_lr_path = "/shares/wegner.ics.uzh/glc23_data/glc23_data/sinr_data/data/env/bioclim_elevation_scaled_europe.npy"
+        self.local.sent_data_path = "/shares/wegner.ics.uzh/glc23_data/SatelliteImages/"
+        self.local.bioclim_lr_path = "/shares/wegner.ics.uzh/glc23_data/sinr_data/data/env/bioclim_elevation_scaled_europe.npy"
         self.local.bioclim_path = "/shares/wegner.ics.uzh/glc23_data/bioclim+elev/bioclim_elevation_scaled_europe.npy"
-        self.local.dataset_file_path = "/shares/wegner.ics.uzh/glc23_data/glc23_data/Pot_10_to_1000.csv"
+        self.local.dataset_file_path = "/shares/wegner.ics.uzh/glc23_data/Pot_10_to_1000.csv"
         self.local.cp_dir_path = "/scratch/jdolli/sent-sinr/checkpoints"
         self.local.logs_dir_path = "/scratch/jdolli/sent-sinr/wandb_logs"
-        self.local.val_data_path = "/shares/wegner.ics.uzh/glc23_data/glc23_data/Presence_Absence_surveys/loc_to_spec.csv"
+        self.local.val_data_path = "/shares/wegner.ics.uzh/glc23_data/Presence_Absence_surveys/loc_to_spec.csv"
         self.local.gpu = False
         
         if sinr:
