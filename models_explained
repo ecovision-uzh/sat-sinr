@@ -1,0 +1,28 @@
+This models.py file contains the implementation of several neural network architectures for the SINR (Spatial Implicit Neural Representations for Global-Scale Species Mapping) framework. Let's break down the key components and classes defined in this file:
+
+    ResidLayer: This class represents a residual block used in the SINR_Net. It consists of two linear layers with ReLU
+    activation functions and dropout, followed by an element-wise addition of the input to the output. This helps
+    in learning complex representations while mitigating the vanishing gradient problem.
+
+    SINR_Net: This class defines the base SINR network architecture. It consists of a location encoder, which is a stack
+     of residual layers, followed by a linear classifier. The location encoder processes input features and captures
+     spatial dependencies, while the classifier predicts the presence or absence of species across a spatial grid.
+
+    SINR: This class serves as the base SINR model, including metric calculations used in all models. It handles the
+    training loop, validation loop, and optimization process. It also contains methods for computing loss, calculating
+    validation metrics such as ROC AUC score and micro F1 score, and configuring optimizers.
+
+    SAT_SINR: This class extends the base SINR model for satellite data integration. It includes methods to set the mode
+     (sat_only, sinr_only, or both) based on the type of data being used. It also adapts the loss calculation process to
+      handle both satellite and SINR features.
+
+    SASI_LF, SASI_EF, SASI_MF: These classes define variations of the SINR model with different fusion strategies: late
+    fusion (LF), early fusion (EF), and middle fusion (MF). They integrate satellite data with SINR features using
+    different architectural approaches.
+
+    ContextResidLayer, Context_SINR_Net: These classes introduce context information into the SINR architecture.
+    ContextResidLayer includes context information in residual layers, while Context_SINR_Net integrates context-aware
+    residual layers into the SINR network.
+
+    get_model: This function returns the appropriate model based on the specified parameters, such as fusion strategy
+    (LF, EF, MF) and initialization mode.
