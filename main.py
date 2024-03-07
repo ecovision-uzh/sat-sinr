@@ -77,7 +77,7 @@ def main(params):
     """main funct"""
     dataset, train_loader, val_loader = create_datasets(params)
     logger = get_logger(params, tag=params.tag)
-    if params.checkpoint is not None:
+    if params.checkpoint != "None":
         model = load_cp(params, dataset)
         model = train_model(params, dataset, train_loader, val_loader, provide_model=model, logger=logger, validate=params.validate)
     else:
