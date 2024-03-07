@@ -16,7 +16,9 @@ class SINR_DS(torch.utils.data.Dataset):
         
         # val_data is not used by the dataset itself, but the model needs this object
         with open(params.local.val_data_path, "r") as f:
-            self.val_data = json.load(f)
+            data_val = pd.read_csv(f, sep=";", header="infer", low_memory=False)
+            self.val_data = data_val.groupby(["patchID", "dayOfYear", "lon", "lat"]).agg({"speciesId": lambda x: list(x)}).reset_index()
+            self.val_data = {str(entry["lon"]) + "/" + str(entry["lat"]) + "/" + str(entry["dayOfYear"]) + "/" + str(entry["patchID"]): entry["speciesId"] for idx, entry in self.val_data.iterrows()}
             
         self.predictors = predictors
         if "sent2" in predictors:
