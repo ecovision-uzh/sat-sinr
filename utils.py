@@ -140,8 +140,8 @@ class DefaultParams():
         self.lr = 5e-4
         self.l2_dec = 0
         self.epochs = 7
-        self.model = "sat_sinr_mf_zc"
-        self.dataset.predictors = "loc_env_sent2"
+        self.model = "sinr"
+        self.dataset.predictors = "loc"
         self.sinr_layers = 8
         self.sinr_hidden = 512
         self.dropout = 0.3
@@ -153,9 +153,9 @@ class DefaultParams():
         self.local.sent_data_path = "/shares/wegner.ics.uzh/glc23_data/SatelliteImages/"
         self.local.bioclim_lr_path = "/shares/wegner.ics.uzh/glc23_data/sinr_data/data/env/bioclim_elevation_scaled_europe.npy"
         self.local.bioclim_path = "/shares/wegner.ics.uzh/glc23_data/bioclim+elev/bioclim_elevation_scaled_europe.npy"
-        self.local.dataset_file_path = "/shares/wegner.ics.uzh/glc23_data/Pot_10_to_1000.csv"
-        self.local.cp_dir_path = "/scratch/jdolli/sent-sinr/checkpoints"
-        self.local.logs_dir_path = "/scratch/jdolli/sent-sinr/wandb_logs"
+        self.local.dataset_file_path = "/shares/wegner.ics.uzh/glc23_data/Presences_only_train.csv"
+        self.local.cp_dir_path = "/scratch/jribas/sent-sinr/checkpoints"
+        self.local.logs_dir_path = "/scratch/jribas/sent-sinr/wandb_logs"
         self.local.val_data_path = "/shares/wegner.ics.uzh/glc23_data/Presence_Absence_surveys/Presences_Absences_train.csv"
         self.local.gpu = False
         
