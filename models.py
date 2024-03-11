@@ -3,11 +3,14 @@ import hydra
 import wandb
 import json
 import os
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+
 import pandas as pd
 import numpy as np
 import pytorch_lightning as pl
 #from utils import RandomEuropeDS
 from sklearn.metrics import roc_auc_score
+
 
 class ResidLayer(torch.nn.Module):
     """Residual block used in SINR_Net"""

@@ -156,7 +156,7 @@ class DefaultParams():
         self.local.dataset_file_path = "/shares/wegner.ics.uzh/glc23_data/Pot_10_to_1000.csv"
         self.local.cp_dir_path = "/scratch/jdolli/sent-sinr/checkpoints"
         self.local.logs_dir_path = "/scratch/jdolli/sent-sinr/wandb_logs"
-        self.local.val_data_path = "/shares/wegner.ics.uzh/glc23_data/Presence_Absence_surveys/loc_to_spec.csv"
+        self.local.val_data_path = "/shares/wegner.ics.uzh/glc23_data/Presence_Absence_surveys/Presences_Absences_train.csv"
         self.local.gpu = False
         
         if sinr:
