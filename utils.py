@@ -140,24 +140,27 @@ class DefaultParams():
         self.lr = 5e-4
         self.l2_dec = 0
         self.epochs = 7
-        self.model = "sat_sinr_mf_zc"
+        self.model = "sat_sinr_mf"
         self.dataset.predictors = "loc_env_sent2"
         self.sinr_layers = 8
         self.sinr_hidden = 512
         self.dropout = 0.3
         self.tag = "Jupyter"
-        self.embedder = "ae_default"
+        self.embedder = "cnn_default"
+        self.validate = False
+        self.checkpoint = "None"
+        
         self.dataset.batchsize = 2048
         self.dataset.use_ds_samples = True
         self.dataset.num_workers = 16
         self.local.sent_data_path = "/shares/wegner.ics.uzh/glc23_data/SatelliteImages/"
-        self.local.bioclim_lr_path = "/shares/wegner.ics.uzh/glc23_data/sinr_data/data/env/bioclim_elevation_scaled_europe.npy"
         self.local.bioclim_path = "/shares/wegner.ics.uzh/glc23_data/bioclim+elev/bioclim_elevation_scaled_europe.npy"
         self.local.dataset_file_path = "/shares/wegner.ics.uzh/glc23_data/Pot_10_to_1000.csv"
         self.local.cp_dir_path = "/scratch/jdolli/sent-sinr/checkpoints"
-        self.local.logs_dir_path = "/scratch/jdolli/sent-sinr/wandb_logs"
-        self.local.val_data_path = "/shares/wegner.ics.uzh/glc23_data/Presence_Absence_surveys/loc_to_spec.csv"
-        self.local.gpu = False
+        self.local.logs_dir_path = "/scratch/jdolli/sent-sinr/"
+        self.local.test_data_path = "/shares/wegner.ics.uzh/glc23_data/Presence_Absence_surveys/Presences_Absences_train.csv"
+        self.local.gpu = True
+
         
         if sinr:
             self.dataset.predictors = "loc_env"  # "loc"
