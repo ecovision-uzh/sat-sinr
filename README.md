@@ -61,3 +61,16 @@ The base_config.yaml contains the model and training parameters.
 The dataset.yaml config contains dataset parameters.
 
 The local.yaml config contains the paths pointing to the various files.
+# Citation
+```
+@Article{SatSINR_ISPRS2024,
+AUTHOR = {Dollinger, J. and Brun, P. and Sainte Fare Garnot, V. and Wegner, J. D.},
+TITLE = {High-Resolution Species Distribution Models through Satellite Imagery},
+JOURNAL = {ISPRS Annals of the Photogrammetry, Remote Sensing and Spatial Information Sciences},
+VOLUME = {},
+YEAR = {2024},
+PAGES = {},
+URL = {},
+DOI = {}
+}
+```
