@@ -90,4 +90,8 @@ def main(params):
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except:
+        # In case of crash make sure to still finish logging everything
+        wandb.finish()
