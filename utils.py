@@ -153,7 +153,6 @@ class DefaultParams():
         self.dataset.batchsize = 2048
         self.dataset.use_ds_samples = True
         self.dataset.num_workers = 16
-        
         self.local.sent_data_path = "/shares/wegner.ics.uzh/glc23_data/SatelliteImages/"
         self.local.bioclim_path = "/shares/wegner.ics.uzh/glc23_data/bioclim+elev/bioclim_elevation_scaled_europe.npy"
         self.local.dataset_file_path = "/shares/wegner.ics.uzh/glc23_data/Pot_10_to_1000.csv"
@@ -161,6 +160,7 @@ class DefaultParams():
         self.local.logs_dir_path = "/scratch/jdolli/sent-sinr/"
         self.local.test_data_path = "/shares/wegner.ics.uzh/glc23_data/Presence_Absence_surveys/Presences_Absences_train.csv"
         self.local.gpu = True
+
         
         if sinr:
             self.dataset.predictors = "loc_env"  # "loc"

@@ -16,3 +16,4 @@ embedder: "cnn_default"
 tag: ""
 checkpoint: None
 validate: False
+
