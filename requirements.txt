@@ -1,0 +1,11 @@
+pandas
+tqdm
+torch
+matplotlib
+pillow
+numpy
+torchvision
+hydra-core
+wandb
+pytorch_lightning
+scikit-learn
