@@ -1,4 +1,3 @@
 batchsize: 2048
-use_ds_samples: True
 num_workers: 16
 predictors: "loc_env_sent2"

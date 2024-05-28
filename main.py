@@ -22,6 +22,8 @@ def get_logger(params, tag=""):
         name += " " + params.dataset.predictors
     elif "sat" in params.model:
         name += " " + params.embedder
+    if params.validate:
+        name += " val" 
     name += " " + tag
     
     logger = hydra.utils.instantiate({"_target_": "pytorch_lightning.loggers.WandbLogger",
@@ -31,7 +33,7 @@ def get_logger(params, tag=""):
     return logger
 
 
-def train_model(params, dataset, train_loader, val_loader, provide_model=None, logger=None):
+def train_model(params, dataset, train_loader, val_loader, provide_model=None, logger=None, validate=False):
     """
     Instantiates model, defines which epoch to save as checkpoint, and trains
     """
@@ -55,18 +57,37 @@ def train_model(params, dataset, train_loader, val_loader, provide_model=None, l
     trainer = pl.Trainer(max_epochs=params.epochs, accelerator=("gpu" if params.local.gpu else "cpu"), devices=1,
                          precision="16-mixed", logger=logger, log_every_n_steps=50,
                          callbacks=[checkpoint_callback])
-    trainer.fit(model, train_loader, val_loader)
+    if validate:
+        trainer.validate(model=model, dataloaders=[val_loader])
+    else:
+        trainer.fit(model, train_loader, val_loader)
     return model
 
 
+def load_cp(params, dataset):
+    if params.model == "sinr" or params.model == "log_reg":
+        model = SINR.load_from_checkpoint(params.checkpoint, params=params, dataset=dataset)
+    elif "sat" in params.model:
+        model = SAT_SINR.load_from_checkpoint(params.checkpoint, params=params, dataset=dataset, sent2_net=get_embedder(params))
+    return model
+
+        
 @hydra.main(version_base=None, config_path='config', config_name='base_config.yaml')
 def main(params):
     """main funct"""
     dataset, train_loader, val_loader = create_datasets(params)
     logger = get_logger(params, tag=params.tag)
-    model = train_model(params, dataset, train_loader, val_loader, logger=logger)
+    if params.checkpoint != "None":
+        model = load_cp(params, dataset)
+        model = train_model(params, dataset, train_loader, val_loader, provide_model=model, logger=logger, validate=params.validate)
+    else:
+        model = train_model(params, dataset, train_loader, val_loader, logger=logger)
     wandb.finish()
 
     
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except:
+        # In case of crash make sure to still finish logging everything
+        wandb.finish()
