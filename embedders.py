@@ -25,7 +25,7 @@ class AE_DEFAULT(torch.nn.Module):
             torch.nn.Linear(256, 256),
             torch.nn.ReLU(),
             torch.nn.Linear(256, hidden_dim * 2),
-        ).to("cpu")
+        )
 
     def forward(self, x):
         return self.net(x)

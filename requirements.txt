@@ -9,3 +9,5 @@ hydra-core
 wandb
 pytorch_lightning
 scikit-learn
+jupyter
+pygbif
