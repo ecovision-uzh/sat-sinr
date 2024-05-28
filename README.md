@@ -39,7 +39,7 @@ To replicate the experiments from the work, you need to pre-process the environm
 The Jupyter notebook [crop and scale bioclim](https://github.com/ecovision-uzh/sat-sinr/blob/master/scripts/crop%20and%20scale%20bioclim.ipynb) loads the 20 TIFF-rasters and
 turns them into a single numpy array, normalizes it and crops it to the European bounds.
 ### GBIF PO Occurrence Data
-Jupyter notebook [reduce classes](https://github.com/ecovision-uzh/sat-sinr/blob/master/scripts/crop%20and%20scale%20bioclim.ipynb) loads the 5 million PO occurences,
+The Jupyter notebook [reduce classes](https://github.com/ecovision-uzh/sat-sinr/blob/master/scripts/crop%20and%20scale%20bioclim.ipynb) loads the 5 million PO occurences,
 reduces sample-number per class to 1000 and removes all classes with less than 10 samples.
 # Experiments
 Ensure that the paths in the config local.yaml point to the proper files.
