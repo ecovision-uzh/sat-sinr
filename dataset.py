@@ -16,10 +16,21 @@ class SINR_DS(torch.utils.data.Dataset):
         # test_data is not used by the dataset itself, but the model needs this object
         with open(params.local.test_data_path, "r") as f:
             data_test = pd.read_csv(f, sep=";", header="infer", low_memory=False)
-            self.test_data = data_test.groupby(["patchID", "dayOfYear", "lon", "lat"]).agg(
-                {"speciesId": lambda x: list(x)}).reset_index()
-            self.test_data = {str(entry["lon"]) + "/" + str(entry["lat"]) + "/" + str(entry["dayOfYear"]) + "/" + str(
-                entry["patchID"]): entry["speciesId"] for idx, entry in self.test_data.iterrows()}
+            self.test_data = (
+                data_test.groupby(["patchID", "dayOfYear", "lon", "lat"])
+                .agg({"speciesId": lambda x: list(x)})
+                .reset_index()
+            )
+            self.test_data = {
+                str(entry["lon"])
+                + "/"
+                + str(entry["lat"])
+                + "/"
+                + str(entry["dayOfYear"])
+                + "/"
+                + str(entry["patchID"]): entry["speciesId"]
+                for idx, entry in self.test_data.iterrows()
+            }
 
         self.predictors = predictors
         if "sent2" in predictors:
@@ -28,14 +39,18 @@ class SINR_DS(torch.utils.data.Dataset):
             # The raster we are loading is already cropped to Europe and normalized
             context_feats = np.load(bioclim_path).astype(np.float32)
             self.raster = torch.from_numpy(context_feats)
-            self.raster[torch.isnan(self.raster)] = 0.0  # replace with mean value (0 is mean post-normalization)
+            self.raster[torch.isnan(self.raster)] = (
+                0.0  # replace with mean value (0 is mean post-normalization)
+            )
 
         self.sent_data_path = sent_data_path
 
-        self.transforms = v2.Compose([
-            v2.RandomHorizontalFlip(p=0.5),
-            v2.RandomVerticalFlip(p=0.5),
-        ])
+        self.transforms = v2.Compose(
+            [
+                v2.RandomHorizontalFlip(p=0.5),
+                v2.RandomVerticalFlip(p=0.5),
+            ]
+        )
 
     def __len__(self):
         return len(self.data)
@@ -50,7 +65,12 @@ class SINR_DS(torch.utils.data.Dataset):
 
     def _encode_loc(self, lon, lat):
         """Expects lon and lat to be scale between [-1,1]"""
-        features = [np.sin(np.pi * lon), np.cos(np.pi * lon), np.sin(np.pi * lat), np.cos(np.pi * lat)]
+        features = [
+            np.sin(np.pi * lon),
+            np.cos(np.pi * lon),
+            np.sin(np.pi * lat),
+            np.cos(np.pi * lat),
+        ]
         return np.stack(features, axis=-1)
 
     def sample_encoded_locs(self, size):
@@ -61,7 +81,9 @@ class SINR_DS(torch.utils.data.Dataset):
         lat = lat * 2 - 1
         loc_enc = torch.tensor(self._encode_loc(lon, lat), dtype=torch.float32)
         if "env" in self.predictors:
-            env_enc = bilinear_interpolate(torch.stack([torch.tensor(lon), torch.tensor(lat)], dim=1), self.raster)
+            env_enc = bilinear_interpolate(
+                torch.stack([torch.tensor(lon), torch.tensor(lat)], dim=1), self.raster
+            )
             if "loc" in self.predictors:
                 return torch.cat([loc_enc, env_enc], dim=1).type("torch.FloatTensor")
             else:
@@ -82,7 +104,9 @@ class SINR_DS(torch.utils.data.Dataset):
     def get_loc_env(self, lon, lat):
         """Given lon and lat, create the location and environmental embedding."""
         lon_norm, lat_norm = self._normalize_loc_to_uniform(lon, lat)
-        loc_enc = torch.tensor(self._encode_loc(lon_norm, lat_norm), dtype=torch.float32)
+        loc_enc = torch.tensor(
+            self._encode_loc(lon_norm, lat_norm), dtype=torch.float32
+        )
         env_enc = self.get_env_raster(lon, lat).type("torch.FloatTensor")
         return torch.cat((loc_enc, env_enc.view(20)))
 
@@ -108,8 +132,26 @@ class SINR_DS(torch.utils.data.Dataset):
 
     def get_gbif_sent2(self, pid):
         """Get Sentinel-2 image for patch_id."""
-        rgb_path = self.sent_data_path + "rgb/" + str(pid)[-2:] + "/" + str(pid)[-4:-2] + "/" + str(pid) + ".jpeg"
-        nir_path = self.sent_data_path + "nir/" + str(pid)[-2:] + "/" + str(pid)[-4:-2] + "/" + str(pid) + ".jpeg"
+        rgb_path = (
+            self.sent_data_path
+            + "rgb/"
+            + str(pid)[-2:]
+            + "/"
+            + str(pid)[-4:-2]
+            + "/"
+            + str(pid)
+            + ".jpeg"
+        )
+        nir_path = (
+            self.sent_data_path
+            + "nir/"
+            + str(pid)[-2:]
+            + "/"
+            + str(pid)[-4:-2]
+            + "/"
+            + str(pid)
+            + ".jpeg"
+        )
         rgb = Image.open(rgb_path)
         nir = Image.open(nir_path)
         img = torch.concat([self.to_tensor(rgb), self.to_tensor(nir)], dim=0) / 255
@@ -121,21 +163,39 @@ class SINR_DS(torch.utils.data.Dataset):
         data_dict = self.data.iloc[idx]
         lon, lat = tuple(data_dict[["lon", "lat"]].to_numpy())
         if "sent2" in self.predictors:
-            return self.encode(lon, lat), self.get_gbif_sent2(data_dict["patchID"]), torch.tensor(
-                data_dict["speciesId"])
+            return (
+                self.encode(lon, lat),
+                self.get_gbif_sent2(data_dict["patchID"]),
+                torch.tensor(data_dict["speciesId"]),
+            )
         else:
             return self.encode(lon, lat), torch.tensor(data_dict["speciesId"])
 
 
 def create_datasets(params):
     """Creates dataset and dataloaders from the various files"""
-    dataset_file = pd.read_csv(params.local.dataset_file_path, sep=";", header='infer', low_memory=False)
+    dataset_file = pd.read_csv(
+        params.local.dataset_file_path, sep=";", header="infer", low_memory=False
+    )
     bioclim_path = params.local.bioclim_path
-    dataset = SINR_DS(params, dataset_file, params.dataset.predictors, sent_data_path=params.local.sent_data_path,
-                      bioclim_path=bioclim_path)
+    dataset = SINR_DS(
+        params,
+        dataset_file,
+        params.dataset.predictors,
+        sent_data_path=params.local.sent_data_path,
+        bioclim_path=bioclim_path,
+    )
     ds_train, ds_val = torch.utils.data.random_split(dataset, [0.9, 0.1])
-    train_loader = torch.utils.data.DataLoader(ds_train, shuffle=True, batch_size=params.dataset.batchsize,
-                                               num_workers=params.dataset.num_workers)
-    val_loader = torch.utils.data.DataLoader(ds_val, shuffle=False, batch_size=params.dataset.batchsize,
-                                             num_workers=params.dataset.num_workers)
+    train_loader = torch.utils.data.DataLoader(
+        ds_train,
+        shuffle=True,
+        batch_size=params.dataset.batchsize,
+        num_workers=params.dataset.num_workers,
+    )
+    val_loader = torch.utils.data.DataLoader(
+        ds_val,
+        shuffle=False,
+        batch_size=params.dataset.batchsize,
+        num_workers=params.dataset.num_workers,
+    )
     return dataset, train_loader, val_loader

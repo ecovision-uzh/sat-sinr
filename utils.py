@@ -14,14 +14,16 @@ def bilinear_interpolate(loc_ip, data):
 
     # map to [0,1], then scale to data size
     loc = (loc_ip.clone() + 1) / 2.0
-    loc[:, 1] = 1 - loc[:, 1]  # this is because latitude goes from +90 on top to bottom while
+    loc[:, 1] = (
+        1 - loc[:, 1]
+    )  # this is because latitude goes from +90 on top to bottom while
     # longitude goes from -90 to 90 left to right
 
     assert not torch.any(torch.isnan(loc))
 
     # cast locations into pixel space
-    loc[:, 0] *= (data.shape[1] - 1)
-    loc[:, 1] *= (data.shape[0] - 1)
+    loc[:, 0] *= data.shape[1] - 1
+    loc[:, 1] *= data.shape[0] - 1
 
     loc_int = torch.floor(loc).long()  # integer pixel coordinates
     xx = loc_int[:, 0]
@@ -35,8 +37,12 @@ def bilinear_interpolate(loc_ip, data):
     dx = loc_delta[:, 0].unsqueeze(1)
     dy = loc_delta[:, 1].unsqueeze(1)
 
-    interp_val = data[yy, xx, :] * (1 - dx) * (1 - dy) + data[yy, xx_plus, :] * dx * (1 - dy) + \
-                 data[yy_plus, xx, :] * (1 - dx) * dy + data[yy_plus, xx_plus, :] * dx * dy
+    interp_val = (
+        data[yy, xx, :] * (1 - dx) * (1 - dy)
+        + data[yy, xx_plus, :] * dx * (1 - dy)
+        + data[yy_plus, xx, :] * (1 - dx) * dy
+        + data[yy_plus, xx_plus, :] * dx * dy
+    )
 
     return interp_val
 

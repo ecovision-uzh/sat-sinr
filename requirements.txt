@@ -11,3 +11,6 @@ pytorch_lightning
 scikit-learn
 jupyter
 pygbif
+rasterio
+pyproj
+rioxarray

@@ -14,7 +14,7 @@ class ResidLayer(torch.nn.Module):
             torch.nn.ReLU(),
             torch.nn.Dropout(dropout),
             torch.nn.Linear(hidden_dim, hidden_dim),
-            torch.nn.ReLU()
+            torch.nn.ReLU(),
         )
 
     def forward(self, x):
@@ -45,7 +45,8 @@ class SINR_Net(torch.nn.Module):
 
 class SINR(pl.LightningModule):
     """Base SINR, including metric calculations used in all models.
-    Also includes the log_reg implementation, replacing the SINR_net with a single layer."""
+    Also includes the log_reg implementation, replacing the SINR_net with a single layer.
+    """
 
     def __init__(self, params, dataset, **kwargs):
         super().__init__(**kwargs)
@@ -61,8 +62,12 @@ class SINR(pl.LightningModule):
         if params.model == "log_reg":
             self.net = torch.nn.Linear(input_len, 10040)
         elif params.model == "sinr":
-            self.net = SINR_Net(input_len, hidden_dim=params.sinr_hidden, dropout=params.dropout,
-                                layers=params.sinr_layers)
+            self.net = SINR_Net(
+                input_len,
+                hidden_dim=params.sinr_hidden,
+                dropout=params.dropout,
+                layers=params.sinr_layers,
+            )
         self.dataset = dataset
         self.test_data = dataset.test_data
 
@@ -70,7 +75,7 @@ class SINR(pl.LightningModule):
         self.max_weighted_roc_auc = 0
         self.max_micro_f1 = 0
 
-        self.save_hyperparameters(ignore=['dataset'])
+        self.save_hyperparameters(ignore=["dataset"])
 
     def forward(self, x):
         return self.net(x)
@@ -78,7 +83,9 @@ class SINR(pl.LightningModule):
     def apply_model_and_an_full_loss(self, batch, dataset, params):
         """Get x, sample random background samples, process both through the network, and calculate the loss."""
         loc_features, labels = batch
-        random_loc_features = dataset.sample_encoded_locs(len(loc_features)).to(labels.device)
+        random_loc_features = dataset.sample_encoded_locs(len(loc_features)).to(
+            labels.device
+        )
 
         loc_pred = torch.sigmoid(self(loc_features))
         rand_pred = torch.sigmoid(self(random_loc_features))
@@ -92,7 +99,9 @@ class SINR(pl.LightningModule):
         # Assume all classes at the random background locations to be absent
         loss_bg = -torch.log((1 - rand_pred) + 1e-5)
         # For the confirmed occurrences, switch the sign of the predicted probability and upscale with pos_weight
-        loss_pos[inds, labels] = params.pos_weight * -torch.log(loc_pred[inds, labels] + 1e-5)
+        loss_pos[inds, labels] = params.pos_weight * -torch.log(
+            loc_pred[inds, labels] + 1e-5
+        )
 
         return loss_pos.mean() + loss_bg.mean()
 
@@ -180,13 +189,14 @@ class SINR(pl.LightningModule):
         return {"loss": loss, "progress_bar": float(loss_detached)}
 
     def configure_optimizers(self):
-        opt = torch.optim.Adam(self.net.parameters(), lr=self.params.lr,
-                               weight_decay=self.params.l2_dec)
+        opt = torch.optim.Adam(
+            self.net.parameters(), lr=self.params.lr, weight_decay=self.params.l2_dec
+        )
         return opt
 
 
 class SAT_SINR(SINR):
-    """Abstract Sat-Sinr with adapted loss """
+    """Abstract Sat-Sinr with adapted loss"""
 
     def __init__(self, params, dataset, sent2_net, **kwargs):
         super().__init__(params, dataset, **kwargs)
@@ -194,8 +204,12 @@ class SAT_SINR(SINR):
         self.net.sent2_net = sent2_net
         self.dataset = dataset
         # Instantiate another DataLoader from the dataset to serve as background samples
-        self.re_dl = torch.utils.data.DataLoader(dataset, shuffle=True, batch_size=params.dataset.batchsize,
-                                                 num_workers=params.dataset.num_workers)
+        self.re_dl = torch.utils.data.DataLoader(
+            dataset,
+            shuffle=True,
+            batch_size=params.dataset.batchsize,
+            num_workers=params.dataset.num_workers,
+        )
         # Instantiate iterator from the dataloader
         self.re_iter = iter(self.re_dl)
 
@@ -211,19 +225,27 @@ class SAT_SINR(SINR):
             random_loc_features, random_sent2, _ = next(self.re_iter)
 
         rand_pred = torch.sigmoid(
-            self.net((random_loc_features.to(loc_features.device), random_sent2.to(loc_features.device))))
+            self.net(
+                (
+                    random_loc_features.to(loc_features.device),
+                    random_sent2.to(loc_features.device),
+                )
+            )
+        )
         loc_pred = torch.sigmoid(self.net((loc_features, sent2_images)))
 
         # Make sure that all have the same length (Avoiding the edge-case of last batch in dl being smaller than rest).
-        rand_pred = rand_pred[:len(loc_pred)]
-        loc_pred = loc_pred[:len(rand_pred)]
-        labels = labels[:len(loc_pred)]
+        rand_pred = rand_pred[: len(loc_pred)]
+        loc_pred = loc_pred[: len(rand_pred)]
+        labels = labels[: len(loc_pred)]
 
         inds = torch.arange(len(labels))
 
         loss_pos = -torch.log((1 - loc_pred) + 1e-5)
         loss_bg = -torch.log((1 - rand_pred) + 1e-5)
-        loss_pos[inds, labels] = params.pos_weight * -torch.log(loc_pred[inds, labels] + 1e-5)
+        loss_pos[inds, labels] = params.pos_weight * -torch.log(
+            loc_pred[inds, labels] + 1e-5
+        )
 
         return loss_pos.mean() + loss_bg.mean()
 
@@ -247,7 +269,12 @@ class SASI_LF(torch.nn.Module):
             inp_size += 4
         if "env" in params.dataset.predictors:
             inp_size += 20
-        self.net = SINR_Net(inp_size, hidden_dim=params.sinr_hidden, dropout=params.dropout, layers=params.sinr_layers)
+        self.net = SINR_Net(
+            inp_size,
+            hidden_dim=params.sinr_hidden,
+            dropout=params.dropout,
+            layers=params.sinr_layers,
+        )
         self.sent2_to_classes = torch.nn.Linear(256, 10040)
         self.sat_only = sat_only
 
@@ -274,7 +301,7 @@ class ContextResidLayer(torch.nn.Module):
             torch.nn.ReLU(),
             torch.nn.Dropout(dropout),
             torch.nn.Linear(hidden_dim, hidden_dim),
-            torch.nn.ReLU()
+            torch.nn.ReLU(),
         )
         self.embedder = torch.nn.Linear(256, hidden_dim)
         # Init embedder weights to zero
@@ -295,7 +322,9 @@ class Context_SINR_Net(torch.nn.Module):
 
         self.inp_l = torch.nn.Linear(input_len, hidden_dim)
         self.relu = torch.nn.ReLU()
-        self.resid_l = torch.nn.Sequential(*[ContextResidLayer(hidden_dim, dropout) for i in range(layers)])
+        self.resid_l = torch.nn.Sequential(
+            *[ContextResidLayer(hidden_dim, dropout) for i in range(layers)]
+        )
 
         self.classifier = self.net = torch.nn.Linear(hidden_dim, 10040)
 
@@ -320,8 +349,12 @@ class SASI_MF(torch.nn.Module):
             inp_size += 4
         if "env" in params.dataset.predictors:
             inp_size += 20
-        self.net = Context_SINR_Net(inp_size, hidden_dim=params.sinr_hidden, dropout=params.dropout,
-                                    layers=params.sinr_layers)
+        self.net = Context_SINR_Net(
+            inp_size,
+            hidden_dim=params.sinr_hidden,
+            dropout=params.dropout,
+            layers=params.sinr_layers,
+        )
         self.predictors = params.dataset.predictors
 
     def forward(self, x):
@@ -345,8 +378,12 @@ class SASI_EF(torch.nn.Module):
             inp_size += 4
         if "env" in params.dataset.predictors:
             inp_size += 20
-        self.net = SINR_Net(inp_size + enc_dim, hidden_dim=params.sinr_hidden, dropout=params.dropout,
-                            layers=params.sinr_layers)
+        self.net = SINR_Net(
+            inp_size + enc_dim,
+            hidden_dim=params.sinr_hidden,
+            dropout=params.dropout,
+            layers=params.sinr_layers,
+        )
         self.sent2_to_input = torch.nn.Linear(256, enc_dim)
 
     def forward(self, x):

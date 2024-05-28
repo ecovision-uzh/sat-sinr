@@ -38,8 +38,7 @@ class CNN_SMALLERINPUT(torch.nn.Module):
         super().__init__()
         self.center_crop = torchvision.transforms.functional.center_crop
         self.layer_removed = layer_removed
-        layers = [torch.nn.Conv2d(4, 32, 4, 2, 1),
-                  torch.nn.ReLU()]
+        layers = [torch.nn.Conv2d(4, 32, 4, 2, 1), torch.nn.ReLU()]
         for i in range(layer_removed):
             layers.append(torch.nn.Conv2d(32, 32, 3, 1, 1))
             layers.append(torch.nn.ReLU())
@@ -71,7 +70,7 @@ class View(torch.nn.Module):
 
 
 def get_embedder(params):
-    if params.embedder == "ae_default":
+    if params.embedder == "cnn_default":
         return AE_DEFAULT()
     elif params.embedder.startswith("cnn_si"):
         return CNN_SMALLERINPUT(int(params.embedder[-1]))
