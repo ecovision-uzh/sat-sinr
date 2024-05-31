@@ -11,8 +11,8 @@ git clone https://github.com/ecovision-uzh/sat-sinr.git
 ```
 Create a new [Python](https://www.python.org) environment and install the requirements (in Unix):
 ```bash
-python3 -m venv .sat-sinr
-source .venv/bin/activate
+python3 -m venv .sat-sinr-venv
+source .sat-sinr-venv/bin/activate
 pip install -r requirements.txt
 ```
 ## Additional Data Downloads
@@ -44,13 +44,13 @@ reduces sample-number per class to 1000 and removes all classes with less than 1
 # Experiments
 Ensure that the paths in the config local.yaml point to the proper files.
 
-Train late fusion Sat-SINR with location and bioclimatic as predictor:
+Train late fusion Sat-SINR with location, bioclimatic and Sentinel-2 images as predictor:
 ```bash
-python3 main.py model=sat_sinr_lf dataset.predictors=loc_env
+python3 main.py model=sat_sinr_lf dataset.predictors=loc_env_sent2
 ```
-Train SINR with location and bioclimatic as predictor:
+Train SINR with location as predictor:
 ```bash
-python3 main.py model=sinr dataset.predictors=loc_env
+python3 main.py model=sinr dataset.predictors=loc
 ```
 The model options are: "sat_sinr_ef", "sat_sinr_mf", "sat_sinr_lf", "sinr" and "log_reg".
 
