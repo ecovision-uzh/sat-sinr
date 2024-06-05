@@ -3,7 +3,7 @@ import math
 import torchvision
 
 
-class AE_DEFAULT(torch.nn.Module):
+class CNN_DEFAULT(torch.nn.Module):
     """Default for Sat-SINR. Used as autoencoder in a previous project inspired by beta-VAE"""
 
     def __init__(self, hidden_dim=128):
@@ -71,7 +71,7 @@ class View(torch.nn.Module):
 
 def get_embedder(params):
     if params.embedder == "cnn_default":
-        return AE_DEFAULT()
+        return CNN_DEFAULT()
     elif params.embedder.startswith("cnn_si"):
         return CNN_SMALLERINPUT(int(params.embedder[-1]))
     else:
