@@ -1,6 +1,6 @@
 # Sat-SINR: High-Resolution Species Distribution Models through Satellite Imagery
 This repository contains the code for replicating the experiments from **Sat-SINR: High-Resolution Species Distribution Models through Satellite Imagery**.
-The work extends the [SINR](https://www.github.com/elijahcole/sinr) model with satellite imagery on the basis of the [GeoLifeClef 2023 challenge](https://www.kaggle.com/competitions/geolifeclef-2023-lifeclef-2023-x-fgvc10/overview).
+The work extends the [SINR](https://www.github.com/elijahcole/sinr) model with satellite imagery on the basis of the [GeoLifeClef 2023 challenge](https://www.kaggle.com/competitions/geolifeclef-2023-lifeclef-2023-x-fgvc10/overview). The code uses the [Pytorch Lightning](https://lightning.ai/docs/pytorch/stable/) framework with [Hydra](https://hydra.cc/docs/intro/).
 # How to Run
 To replicate the experiments, you will need to setup the Python environment, download the additional data, and pre-process two files.
 It is important that the paths in the config local.yaml point to the proper files.
