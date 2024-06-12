@@ -62,6 +62,7 @@ The dataset.yaml config contains dataset parameters.
 
 The local.yaml config contains the paths pointing to the various files.
 # Citation
+The paper was presented at ISPRS TCII Symposium in June 2024, but the annals are not yet published.
 ```
 @Article{SatSINR_ISPRS2024,
 AUTHOR = {Dollinger, J. and Brun, P. and Garnot, V. S. F. and Wegner, J. D.},
