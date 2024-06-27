@@ -66,14 +66,14 @@ The paper was presented at ISPRS TCII Symposium in June 2024:
 
 Dollinger, J., Brun, P., Sainte Fare Garnot, V., and Wegner, J. D.: Sat-SINR: High-Resolution Species Distribution Models Through Satellite Imagery, ISPRS Ann. Photogramm. Remote Sens. Spatial Inf. Sci., X-2-2024, 41–48, https://doi.org/10.5194/isprs-annals-X-2-2024-41-2024, 2024
 ```
-@Article{SatSINR_ISPRS2024,
-AUTHOR = {Dollinger, J. and Brun, P. and Garnot, V. S. F. and Wegner, J. D.},
-TITLE = {High-Resolution Species Distribution Models through Satellite Imagery},
-JOURNAL = {ISPRS Annals of the Photogrammetry, Remote Sensing and Spatial Information Sciences},
-VOLUME = {X-2-2024},
-YEAR = {2024},
-PAGES = {41-48},
-URL = {https://doi.org/10.5194/isprs-annals-X-2-2024-41-2024},
-DOI = {}
+@article{dollinger2024sat,
+  title={Sat-SINR: High-Resolution Species Distribution Models Through Satellite Imagery},
+  author={Dollinger, Johannes and Brun, Philipp and Sainte Fare Garnot, Vivien and Wegner, Jan Dirk},
+  journal={ISPRS Annals of the Photogrammetry, Remote Sensing and Spatial Information Sciences},
+  volume={10},
+  pages={41--48},
+  year={2024},
+  publisher={Copernicus GmbH}
 }
+
 ```
